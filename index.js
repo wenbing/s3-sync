@@ -143,13 +143,14 @@ function s3syncer(db, options) {
       if (err) return callback(err)
       if (res.statusCode === 404) return callback(null)
 
+      var ws = LevelWriteStream(db)()
       es.pipeline(
           res
         , es.split()
         , es.parse()
-        , LevelWriteStream(db)()
-      ).once('close', callback)
-       .once('error', callback)
+        , ws
+      ).once('error', callback)
+      ws.once('finish', callback)
     })
   }
 
