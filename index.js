@@ -161,8 +161,9 @@ function s3syncer(db, options) {
       .pipe(fs.createWriteStream(options.cacheSrc))
       .once('error', callback)
       .once('close', function() {
-        client.putFile(options.cacheSrc, options.cacheDest, function(err) {
+        client.putFile(options.cacheSrc, options.cacheDest, function(err, res) {
           if (err) return callback(err)
+          res.resume();
           fs.unlink(options.cacheSrc, callback)
         })
      })
